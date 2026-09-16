@@ -5,6 +5,7 @@ applyTo: "**"
 ---
 
 - Never search or read `~/.m2` or dependency caches.
+- After creating new files, run `mvn license:update-file-header` to apply the license header instead of generating it manually.
 - If the user names a local path, inspect that path directly before doing a broader search.
 - When you are the primary coding agent and an external Java API or resource lookup is needed, invoke the `dependency-source-research` agent first when it is available. Provide the workspace path and the dependency, symbol, or resource to investigate, then use its report as evidence before exploring broadly yourself. This delegation rule does not apply inside that research agent.
 - When an external dependency's behavior or API matters, first use relevant source attachments or excerpts provided by the user. If they are insufficient, derive the dependency's group, artifact, and module from the build descriptor and inspect local source under `~/code` before using any other source. Search organization roots and nested module descriptors, not only repository names that exactly match Maven artifacts. Account for layouts such as `~/code/scijava/*`, `~/code/imagej/*`, and multi-module repositories such as `~/code/langchain4j/langchain4j/*`; on Windows, `~/code` may be `C:\Users\<user>\code`.
