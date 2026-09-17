@@ -5,6 +5,7 @@ Personal agent customizations used by VS Code installations.
 ## Layout
 
 - `vscode/user/prompts/` contains VS Code user-level instructions and custom agents.
+- `vscode/user/mcp.json` is a minimal merge fragment for the Serena MCP server.
 - `AGENTS.md` documents the maintenance rules for this repository.
 
 ## Managed Files
@@ -24,3 +25,15 @@ local directory. After enabling Developer Mode, the junction can be replaced
 with a native symbolic link if desired.
 
 Do not store API keys, tokens, passwords, or other secrets in this repository.
+
+## Serena MCP
+
+The Serena configuration in `vscode/user/mcp.json` starts the MCP server in
+VS Code's `ide-assistant` context with `query-projects` enabled. It starts the
+Serena ProjectServer automatically when needed, then launches the MCP server
+against the Fiji LLM project under the user's profile.
+
+Serena uses the active project for the repository being edited and additional
+registered projects for local dependency source checkouts. Keep those
+dependency projects registered separately and query them through Serena when
+reading external Java APIs.
