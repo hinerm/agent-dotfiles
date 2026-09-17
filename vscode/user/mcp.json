@@ -6,7 +6,7 @@
 			"args": [
 				"-NoProfile",
 				"-Command",
-				"$projectServer = Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue; if (-not $projectServer) { Start-Process -FilePath 'uv' -ArgumentList @('run','--with','serena-agent','serena','start-project-server') -WindowStyle Hidden | Out-Null; for ($attempt = 0; $attempt -lt 30; $attempt++) { Start-Sleep -Milliseconds 500; $projectServer = Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue; if ($projectServer) { break } }; if (-not $projectServer) { throw 'Serena ProjectServer did not start on port 24225' } }; & uv run --with serena-agent serena start-mcp-server --context ide-assistant --add-mode query-projects --project (Join-Path $env:USERPROFILE 'code\\fiji\\fiji-llm')"
+				"$projectServer = Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue; if (-not $projectServer) { Start-Process -FilePath 'uv' -ArgumentList @('run','--with','serena-agent','serena','start-project-server') -WindowStyle Hidden | Out-Null; for ($attempt = 0; $attempt -lt 30; $attempt++) { Start-Sleep -Milliseconds 500; $projectServer = Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue; if ($projectServer) { break } }; if (-not $projectServer) { throw 'Serena ProjectServer did not start on port 24225' } }; & uv run --with serena-agent serena start-mcp-server --context vscode --add-mode query-projects --project C:\\Users\\hiner\\code\\fiji\\fiji-llm"
 			]
 		}
 	}
