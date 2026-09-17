@@ -16,49 +16,39 @@ This repository is the source of truth for the personal agent customizations use
 - Do not add credentials, tokens, private keys, or machine-specific secrets.
 - When adding a customization, update `README.md` if its discovery path or setup instructions change.
 
-## Serena Project Registration
+## Serena Source Lookup
 
-Serena uses one active project for the repository being edited and can query
-additional registered projects as external source checkouts. Keep `fiji-llm`
-active in normal work; register dependency modules separately and query them
-with `query_project` rather than switching the active project.
+Keep `fiji-llm` active during normal work. Use Serena's `query_project` from
+that active project to inspect local dependency checkouts; do not switch the
+active project just to read source. The MCP server should use
+`--add-mode query-projects` and `--project <fiji-llm-path>`.
 
-Register the checkout root or Maven module root, not `src`, `target`, or a
-parent directory that only aggregates modules.
+When a checkout needs to be added to Serena's project list, use this temporary
+setup procedure:
 
-When the Serena `activate_project` tool is available, prefer it for
-registration. Call it once per absolute checkout path, for example:
-
-```json
-{"project":"C:\\Users\\<user>\\code\\scijava\\script-editor"}
-```
-
-This creates the Serena project when needed and activates it, without the
-interactive language-selection prompts. Repeat for each dependency, then
-activate `fiji-llm` again. Dependency projects do not need onboarding just to
-support source lookup.
-
-Use one unique project name per checkout. Existing registrations do not need
-to be recreated.
-
-`activate_project` does not take a language argument. To force a checkout to
-use Java, set `language_servers` to `- java` in that project's
-`.serena/project.yml`, then restart the relevant Serena language server.
-When resetting Serena, do not restart or kill only its ProjectServer; stop the
-MCP server first, then restart ProjectServer and the MCP server in that order.
-
-The Serena MCP server should start with `--add-mode query-projects` and
-`--project <fiji-llm-path>`. Cross-project symbol queries also require the
-Serena ProjectServer, started separately with:
-
-```powershell
-uv run --with serena-agent serena start-project-server
-```
+1. Change the Serena MCP command to `--context agent`, then restart the MCP
+	server.
+2. Call `activate_project` once for each absolute checkout root. Use the
+	repository or Maven module root, not `src`, `target`, or a parent directory
+	that only aggregates modules. No onboarding is needed for source lookup.
+3. Activate `fiji-llm` again.
+4. Stop the Serena MCP server before resetting ProjectServer state.
+5. Kill the process listening on TCP port `24225`.
+6. Restore `--context vscode` in the MCP command and restart the MCP server.
+7. Verify the projects with `list_queryable_projects`, then query them from
+	`fiji-llm` with `query_project`.
 
 The managed `vscode/user/mcp.json` fragment starts ProjectServer automatically
-when port `24225` is not already listening. After adding registrations,
-restart the MCP server and verify them with `list_queryable_projects` before
-using `query_project`.
+when port `24225` is not already listening. ProjectServer starts the required
+language servers for projects queried through `query_project`; a separate
+language-server restart is not part of the normal setup procedure.
+
+The PowerShell reset command is:
+
+```powershell
+$projectServerPids = @(Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique)
+$projectServerPids | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
+```
 
 ## Repository-Owned Fiji Customizations
 

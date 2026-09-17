@@ -29,11 +29,16 @@ Do not store API keys, tokens, passwords, or other secrets in this repository.
 ## Serena MCP
 
 The Serena configuration in `vscode/user/mcp.json` starts the MCP server in
-VS Code's `ide-assistant` context with `query-projects` enabled. It starts the
-Serena ProjectServer automatically when needed, then launches the MCP server
-against the Fiji LLM project under the user's profile.
+the `vscode` context with `query-projects` enabled. It starts the Serena
+ProjectServer automatically when needed, then launches the MCP server against
+the Fiji LLM project under the user's profile.
 
-Serena uses the active project for the repository being edited and additional
-registered projects for local dependency source checkouts. Keep those
-dependency projects registered separately and query them through Serena when
-reading external Java APIs.
+Keep `fiji-llm` active during normal work and query local dependency checkouts
+through Serena's `query_project` tool. When a checkout needs to be added to
+Serena's project list, temporarily use the `agent` context, activate each
+absolute checkout root and then `fiji-llm`, stop the MCP server, kill the
+ProjectServer process listening on TCP port `24225`, restore the `vscode`
+context, and restart the MCP server. ProjectServer starts the required
+language servers for projects queried through `query_project`; no separate
+language-server restart is normally needed. See `AGENTS.md` for the complete
+procedure.
