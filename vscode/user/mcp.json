@@ -1,12 +1,20 @@
 {
 	"servers": {
-		"serena-mcp": {
+		"serena-mcp-win": {
 			"type": "stdio",
 			"command": "powershell",
 			"args": [
 				"-NoProfile",
 				"-Command",
 				"$projectServer = Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue; if (-not $projectServer) { Start-Process -FilePath 'uv' -ArgumentList @('run','--with','serena-agent','serena','start-project-server') -WindowStyle Hidden | Out-Null; for ($attempt = 0; $attempt -lt 30; $attempt++) { Start-Sleep -Milliseconds 500; $projectServer = Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue; if ($projectServer) { break } }; if (-not $projectServer) { throw 'Serena ProjectServer did not start on port 24225' } }; & uv run --with serena-agent serena start-mcp-server --context vscode --add-mode query-projects --project C:\\Users\\hiner\\code\\fiji\\fiji-llm"
+			]
+		},
+		"serena-mcp-macos": {
+			"type": "stdio",
+			"command": "/bin/zsh",
+			"args": [
+				"-lc",
+				". \"$HOME/.local/bin/env\"; uv_path=\"$(command -v uv || true)\"; if [[ -z \"$uv_path\" ]]; then echo 'uv was not found on PATH' >&2; exit 1; fi; if ! /usr/sbin/lsof -nP -iTCP:24225 -sTCP:LISTEN >/dev/null 2>&1; then \"$uv_path\" run --with serena-agent serena start-project-server >/tmp/serena-project-server.log 2>&1 & for attempt in {1..30}; do if /usr/sbin/lsof -nP -iTCP:24225 -sTCP:LISTEN >/dev/null 2>&1; then break; fi; sleep 0.5; done; if ! /usr/sbin/lsof -nP -iTCP:24225 -sTCP:LISTEN >/dev/null 2>&1; then echo 'Serena ProjectServer did not start on port 24225; see /tmp/serena-project-server.log' >&2; exit 1; fi; fi; exec \"$uv_path\" run --with serena-agent serena start-mcp-server --context vscode --add-mode query-projects --project /Users/hiner/code/fiji/fiji-llm"
 			]
 		}
 	}
