@@ -6,7 +6,7 @@ Personal agent customizations used by VS Code installations.
 
 - `vscode/user/agents/` contains Copilot user-level custom agents.
 - `vscode/user/instructions/` contains Copilot user-level instructions.
-- `vscode/user/mcp.json` is a minimal merge fragment for the Serena MCP server.
+- `vscode/user/mcp/` contains portable, platform-specific MCP configurations.
 - `AGENTS.md` documents the maintenance rules for this repository.
 
 ## Managed Files
@@ -16,10 +16,17 @@ Copilot Agent Host discovery paths:
 
 - `vscode/user/agents/` -> `%USERPROFILE%\\.copilot\\agents\\`
 - `vscode/user/instructions/` -> `%USERPROFILE%\\.copilot\\instructions\\`
+- `vscode/user/mcp/mcp-config.windows.json` -> `%USERPROFILE%\\.copilot\\mcp-config.json` on Windows
+- `vscode/user/mcp/mcp-config.unix.json` -> `~/.copilot/mcp-config.json` on macOS/Linux
 
 Edit the canonical files in this repository. The user-level Copilot paths are
 directory junctions into this tree, so Copilot continues to discover them
 normally.
+
+The MCP configuration is a file rather than a directory. Windows uses a hard
+link for the active `mcp-config.json`; macOS/Linux should use a symbolic link.
+Only the platform-appropriate configuration should be linked as
+`~/.copilot/mcp-config.json`.
 
 ## Windows Link Note
 
@@ -37,10 +44,15 @@ a managed path for these Copilot customizations.
 
 ## Serena MCP
 
-The Serena configuration in `vscode/user/mcp.json` starts the MCP server in
-the `vscode` context with `query-projects` enabled. It starts the Serena
+The platform-specific portable configuration in `vscode/user/mcp/` exposes the
+same logical server name, `serena-mcp`, on every platform. It starts the Serena
 ProjectServer automatically when needed, then launches the MCP server against
 the Fiji LLM project under the user's profile.
+
+The synchronized VS Code user `mcp.json` should contain only shared,
+platform-neutral servers. In this installation it retains `fiji-mcp`; the
+platform-specific Serena entries were moved to the portable configuration so
+Settings Sync cannot activate the wrong operating-system command.
 
 Keep `fiji-llm` active during normal work and query local dependency checkouts
 through Serena's `query_project` tool. When a checkout needs to be added to

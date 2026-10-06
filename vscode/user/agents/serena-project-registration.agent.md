@@ -1,7 +1,7 @@
 ---
 name: "Serena Project Registration"
 description: "Use when a local checkout must be registered as a Serena project; handles context switching, project activation, ProjectServer reset, and verification."
-tools: [vscode/runCommand, vscode/askQuestions, execute, read, edit, 'serena-mcp-macos/*']
+tools: [vscode/runCommand, vscode/askQuestions, execute, read, edit, 'serena-mcp/*']
 argument-hint: "Provide the absolute checkout root or roots to register."
 ---
 
@@ -36,9 +36,12 @@ workflow and ask what state VS Code reports. Do not kill ProjectServer while
 
 ## MCP configuration
 
-- Use the built-in `read` and `edit` tools to inspect and modify the canonical
-  `vscode/user/mcp.json` file in the dotfiles repository.
-- Do not use PowerShell or another shell command to read or edit `mcp.json`.
+- Use the built-in `read` and `edit` tools to inspect and modify the active
+  portable MCP configuration at `~/.copilot/mcp-config.json`. This path is a
+  platform-specific link to the canonical configuration under the dotfiles
+  repository.
+- Do not use PowerShell or another shell command to read or edit
+  `mcp-config.json`.
 - Use `execute` only for process lifecycle commands, such as stopping the
   Serena MCP process after its MCP operations are complete or resetting
   ProjectServer.
@@ -46,9 +49,10 @@ workflow and ask what state VS Code reports. Do not kill ProjectServer while
 ## Procedure
 
 1. Ask the user to stop `serena-mcp` and confirm that it has exited. Read
-   `vscode/user/mcp.json` with the built-in `read` tool, then use the built-in
-   `edit` tool to change the Serena MCP command to `--context agent`. Ask the
-   user to start `serena-mcp` and confirm that it is running before continuing.
+   `~/.copilot/mcp-config.json` with the built-in `read` tool, then use the
+   built-in `edit` tool to change the Serena MCP command to `--context agent`.
+   Ask the user to start `serena-mcp` and confirm that it is running before
+   continuing.
    Preserve `--add-mode query-projects` and the `--project` path for
    `fiji-llm`.
 2. Call `activate_project` once for each absolute checkout root. Use the
@@ -60,23 +64,32 @@ workflow and ask what state VS Code reports. Do not kill ProjectServer while
    `24225`. Never kill or reset ProjectServer while `serena-mcp` might still be
    running.
 5. Use the built-in `edit` tool to restore `--context vscode` in
-   `vscode/user/mcp.json`. Ask the user to start `serena-mcp` and confirm that
-   it is running. Its normal startup command automatically starts ProjectServer
-   and the required project language servers.
+   `~/.copilot/mcp-config.json`. Ask the user to start `serena-mcp` and confirm
+   that it is running. Its normal startup command automatically starts
+   ProjectServer and the required project language servers.
 6. After `serena-mcp` has restarted, verify the projects with
    `list_queryable_projects`, then query the newly registered project from
    `fiji-llm` with `query_project`.
 
-The managed `vscode/user/mcp.json` fragment starts ProjectServer automatically
-when port `24225` is not already listening. ProjectServer starts the required
+The managed portable configuration starts ProjectServer automatically when
+port `24225` is not already listening. ProjectServer starts the required
 language servers for projects queried through `query_project`; do not add a
 separate language-server restart to this procedure.
 
-Use this PowerShell command to reset ProjectServer state:
+On Windows, use this PowerShell command to reset ProjectServer state:
 
 ```powershell
 $projectServerPids = @(Get-NetTCPConnection -LocalPort 24225 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique)
 $projectServerPids | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }
+```
+
+On macOS or Linux, use the equivalent command:
+
+```sh
+project_server_pids="$(lsof -tiTCP:24225 -sTCP:LISTEN 2>/dev/null || true)"
+if [ -n "$project_server_pids" ]; then
+  kill $project_server_pids
+fi
 ```
 
 Report the registered checkout roots, the final active project, the verification

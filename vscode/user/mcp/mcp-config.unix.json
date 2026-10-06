@@ -1,0 +1,11 @@
+{
+	"mcpServers": {
+		"serena-mcp": {
+			"command": "/bin/sh",
+			"args": [
+				"-lc",
+				"if [ -f \"$HOME/.local/bin/env\" ]; then . \"$HOME/.local/bin/env\"; fi; uv_path=\"$(command -v uv || true)\"; if [ -z \"$uv_path\" ]; then echo 'uv was not found on PATH' >&2; exit 1; fi; if ! command -v lsof >/dev/null 2>&1; then echo 'lsof was not found on PATH' >&2; exit 1; fi; if ! lsof -nP -iTCP:24225 -sTCP:LISTEN >/dev/null 2>&1; then \"$uv_path\" run --with serena-agent serena start-project-server >/tmp/serena-project-server.log 2>&1 & for attempt in $(seq 1 30); do if lsof -nP -iTCP:24225 -sTCP:LISTEN >/dev/null 2>&1; then break; fi; sleep 0.5; done; if ! lsof -nP -iTCP:24225 -sTCP:LISTEN >/dev/null 2>&1; then echo 'Serena ProjectServer did not start on port 24225; see /tmp/serena-project-server.log' >&2; exit 1; fi; fi; exec \"$uv_path\" run --with serena-agent serena start-mcp-server --context vscode --add-mode query-projects --project \"$HOME/code/fiji/fiji-llm\""
+			]
+		}
+	}
+}
