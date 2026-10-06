@@ -1,7 +1,7 @@
 ---
 name: "Serena Project Registration"
 description: "Use when a local checkout must be registered as a Serena project; handles context switching, project activation, ProjectServer reset, and verification."
-tools: [read, edit, execute, "vscode/askQuestions", "vscode/runCommand", "serena-mcp/*"]
+tools: [vscode/runCommand, vscode/askQuestions, execute, read, edit, 'serena-mcp-macos/*']
 argument-hint: "Provide the absolute checkout root or roots to register."
 ---
 
