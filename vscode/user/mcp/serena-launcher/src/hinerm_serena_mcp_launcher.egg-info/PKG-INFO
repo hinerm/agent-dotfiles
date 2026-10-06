@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: hinerm-serena-mcp-launcher
+Version: 0.1.0
+Summary: Cross-platform Serena MCP launcher
+Requires-Python: >=3.10

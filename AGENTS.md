@@ -6,7 +6,8 @@ This repository is the source of truth for the personal agent customizations use
 
 - Copilot user agents belong under `vscode/user/agents/`.
 - Copilot user instructions belong under `vscode/user/instructions/`.
-- Copilot portable MCP configurations belong under `vscode/user/mcp/`.
+- VS Code user MCP configuration and launcher sources belong under
+	`vscode/user/mcp/`.
 - Copilot skills belong under `copilot/skills/<skill-name>/`.
 - Keep each customization's filename and frontmatter compatible with the host that discovers it.
 
@@ -40,8 +41,8 @@ setup procedure:
 7. Verify the projects with `list_queryable_projects`, then query them from
 	`fiji-llm` with `query_project`.
 
-The managed portable MCP configuration starts ProjectServer automatically when
-port `24225` is not already listening. ProjectServer starts the required
+The installed Serena launcher starts ProjectServer automatically when port
+`24225` is not already listening. ProjectServer starts the required
 language servers for projects queried through `query_project`; a separate
 language-server restart is not part of the normal setup procedure.
 
@@ -70,12 +71,13 @@ The managed discovery paths on Windows are:
 
 - `%USERPROFILE%\\.copilot\\agents`
 - `%USERPROFILE%\\.copilot\\instructions`
-- `%USERPROFILE%\\.copilot\\mcp-config.json`
+- `%APPDATA%\\Code\\User\\mcp.json`
 - `%USERPROFILE%\\.copilot\\skills\\fiji-script-debugging`
 
 Use `Get-Item` to confirm that the `agents` and `instructions` paths are
 junctions or symbolic links, and verify that the expected files resolve through
 them. Directory junctions are the supported no-admin fallback used by this
-installation. The active MCP configuration is a file; use a hard link on
-Windows and a symbolic link on macOS/Linux, then verify that it matches the
-platform-specific canonical file under `vscode/user/mcp/`.
+installation. Install the Serena launcher with `uv tool install --editable`
+from `vscode/user/mcp/serena-launcher`, then copy `vscode/user/mcp/mcp.json`
+into the file opened by `MCP: Open User Configuration`. Do not link Serena
+configuration into `.copilot`.

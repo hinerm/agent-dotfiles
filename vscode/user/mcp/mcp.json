@@ -1,0 +1,20 @@
+{
+	"servers": {
+		"fiji-mcp": {
+			"type": "http",
+			"url": "http://localhost:9090/mcp"
+		},
+		"serena-mcp": {
+			"type": "stdio",
+			"command": "serena-mcp-launcher",
+			"args": [
+				"--project",
+				"${userHome}/code/fiji/fiji-llm",
+				"--context",
+				"vscode",
+				"--add-mode",
+				"query-projects"
+			]
+		}
+	}
+}

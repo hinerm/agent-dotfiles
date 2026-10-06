@@ -6,27 +6,28 @@ Personal agent customizations used by VS Code installations.
 
 - `vscode/user/agents/` contains Copilot user-level custom agents.
 - `vscode/user/instructions/` contains Copilot user-level instructions.
-- `vscode/user/mcp/` contains portable, platform-specific MCP configurations.
+- `vscode/user/mcp/` contains the synchronized VS Code MCP configuration and
+	the cross-platform Serena launcher package.
 - `AGENTS.md` documents the maintenance rules for this repository.
 
 ## Managed Files
 
-The canonical files are tracked here and remain available at their normal
-Copilot Agent Host discovery paths:
+The canonical agent and instruction files are tracked here and remain
+available at their normal Copilot Agent Host discovery paths. The MCP file is
+copied into the VS Code user configuration:
 
 - `vscode/user/agents/` -> `%USERPROFILE%\\.copilot\\agents\\`
 - `vscode/user/instructions/` -> `%USERPROFILE%\\.copilot\\instructions\\`
-- `vscode/user/mcp/mcp-config.windows.json` -> `%USERPROFILE%\\.copilot\\mcp-config.json` on Windows
-- `vscode/user/mcp/mcp-config.unix.json` -> `~/.copilot/mcp-config.json` on macOS/Linux
+- `vscode/user/mcp/mcp.json` -> the file opened by VS Code's `MCP: Open User Configuration`
+- `vscode/user/mcp/serena-launcher/` -> installed with `uv tool install`
 
-Edit the canonical files in this repository. The user-level Copilot paths are
-directory junctions into this tree, so Copilot continues to discover them
-normally.
+Edit the canonical files in this repository. The user-level agent and
+instruction paths are directory junctions into this tree, so Copilot continues
+to discover them normally.
 
-The MCP configuration is a file rather than a directory. Windows uses a hard
-link for the active `mcp-config.json`; macOS/Linux should use a symbolic link.
-Only the platform-appropriate configuration should be linked as
-`~/.copilot/mcp-config.json`.
+The VS Code MCP configuration is synchronized normally. Copy it once into the
+VS Code user configuration rather than linking it into the platform-specific
+Copilot directory.
 
 ## Windows Link Note
 
@@ -44,15 +45,28 @@ a managed path for these Copilot customizations.
 
 ## Serena MCP
 
-The platform-specific portable configuration in `vscode/user/mcp/` exposes the
-same logical server name, `serena-mcp`, on every platform. It starts the Serena
-ProjectServer automatically when needed, then launches the MCP server against
-the Fiji LLM project under the user's profile.
+Install the launcher from the dotfiles checkout:
 
-The synchronized VS Code user `mcp.json` should contain only shared,
-platform-neutral servers. In this installation it retains `fiji-mcp`; the
-platform-specific Serena entries were moved to the portable configuration so
-Settings Sync cannot activate the wrong operating-system command.
+```sh
+cd vscode/user/mcp/serena-launcher
+uv tool install --editable . --force
+```
+
+If VS Code cannot find the installed command, run `uv tool update-shell` and
+restart VS Code so its process environment includes the uv tool directory.
+
+Then copy `vscode/user/mcp/mcp.json` into the file opened by VS Code's
+`MCP: Open User Configuration` command. Settings Sync can synchronize that
+single configuration across platforms because the server entry uses the
+platform-neutral `serena-mcp-launcher` command and `${userHome}` variable.
+
+The launcher starts Serena's ProjectServer automatically when needed, then
+launches the MCP server against the Fiji LLM project under the user's profile.
+
+Do not add Serena to `~/.copilot/mcp-config.json`; that configuration is owned
+by the Copilot CLI/Agent Host and causes Serena to appear under the Copilot
+runtime. Keep the VS Code user `mcp.json` as the single source for both shared
+servers.
 
 Keep `fiji-llm` active during normal work and query local dependency checkouts
 through Serena's `query_project` tool. When a checkout needs to be added to

@@ -1,0 +1,2 @@
+[console_scripts]
+serena-mcp-launcher = serena_mcp_launcher.launcher:main

@@ -1,0 +1,8 @@
+pyproject.toml
+src/hinerm_serena_mcp_launcher.egg-info/PKG-INFO
+src/hinerm_serena_mcp_launcher.egg-info/SOURCES.txt
+src/hinerm_serena_mcp_launcher.egg-info/dependency_links.txt
+src/hinerm_serena_mcp_launcher.egg-info/entry_points.txt
+src/hinerm_serena_mcp_launcher.egg-info/top_level.txt
+src/serena_mcp_launcher/__init__.py
+src/serena_mcp_launcher/launcher.py
