@@ -36,23 +36,22 @@ workflow and ask what state VS Code reports. Do not kill ProjectServer while
 
 ## MCP configuration
 
-- Use the built-in `read` and `edit` tools to inspect and modify the active
-  portable MCP configuration at `~/.copilot/mcp-config.json`. This path is a
-  platform-specific link to the canonical configuration under the dotfiles
-  repository.
-- Do not use PowerShell or another shell command to read or edit
-  `mcp-config.json`.
+- Use the built-in `read` and `edit` tools to inspect and modify the active VS
+   Code user MCP configuration opened by `MCP: Open User Configuration`. This
+   is normally `%APPDATA%\\Code\\User\\mcp.json` on Windows and
+   `~/.config/Code/User/mcp.json` on Linux.
+- Do not use PowerShell or another shell command to read or edit `mcp.json`.
 - Use `execute` only for process lifecycle commands, such as stopping the
   Serena MCP process after its MCP operations are complete or resetting
   ProjectServer.
 
 ## Procedure
 
-1. Ask the user to stop `serena-mcp` and confirm that it has exited. Read
-   `~/.copilot/mcp-config.json` with the built-in `read` tool, then use the
-   built-in `edit` tool to change the Serena MCP command to `--context agent`.
-   Ask the user to start `serena-mcp` and confirm that it is running before
-   continuing.
+1. Ask the user to stop `serena-mcp` and confirm that it has exited. Read the
+   VS Code user `mcp.json` with the built-in `read` tool, then use the built-in
+   `edit` tool to change the value following the Serena entry's `--context`
+   argument from `vscode` to `agent`. Ask the user to start `serena-mcp` and
+   confirm that it is running before continuing.
    Preserve `--add-mode query-projects` and the `--project` path for
    `fiji-llm`.
 2. Call `activate_project` once for each absolute checkout root. Use the
@@ -63,16 +62,17 @@ workflow and ask what state VS Code reports. Do not kill ProjectServer while
    that confirmation, kill the ProjectServer process listening on TCP port
    `24225`. Never kill or reset ProjectServer while `serena-mcp` might still be
    running.
-5. Use the built-in `edit` tool to restore `--context vscode` in
-   `~/.copilot/mcp-config.json`. Ask the user to start `serena-mcp` and confirm
-   that it is running. Its normal startup command automatically starts
-   ProjectServer and the required project language servers.
+5. Use the built-in `edit` tool to restore the Serena entry's `--context` value
+   to `vscode` in the VS Code user `mcp.json`. Ask the user to start
+   `serena-mcp` and confirm that it is running. The installed launcher
+   automatically starts ProjectServer and the required project language
+   servers.
 6. After `serena-mcp` has restarted, verify the projects with
    `list_queryable_projects`, then query the newly registered project from
    `fiji-llm` with `query_project`.
 
-The managed portable configuration starts ProjectServer automatically when
-port `24225` is not already listening. ProjectServer starts the required
+The installed launcher starts ProjectServer automatically when port `24225` is
+not already listening. ProjectServer starts the required
 language servers for projects queried through `query_project`; do not add a
 separate language-server restart to this procedure.
 

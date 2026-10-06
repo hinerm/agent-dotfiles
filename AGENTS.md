@@ -8,7 +8,6 @@ This repository is the source of truth for the personal agent customizations use
 - Copilot user instructions belong under `vscode/user/instructions/`.
 - VS Code user MCP configuration and launcher sources belong under
 	`vscode/user/mcp/`.
-- Copilot skills belong under `copilot/skills/<skill-name>/`.
 - Keep each customization's filename and frontmatter compatible with the host that discovers it.
 
 ## Editing Rules
@@ -72,7 +71,6 @@ The managed discovery paths on Windows are:
 - `%USERPROFILE%\\.copilot\\agents`
 - `%USERPROFILE%\\.copilot\\instructions`
 - `%APPDATA%\\Code\\User\\mcp.json`
-- `%USERPROFILE%\\.copilot\\skills\\fiji-script-debugging`
 
 Use `Get-Item` to confirm that the `agents` and `instructions` paths are
 junctions or symbolic links, and verify that the expected files resolve through
