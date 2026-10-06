@@ -4,27 +4,36 @@ Personal agent customizations used by VS Code installations.
 
 ## Layout
 
-- `vscode/user/prompts/` contains VS Code user-level instructions and custom agents.
+- `vscode/user/agents/` contains Copilot user-level custom agents.
+- `vscode/user/instructions/` contains Copilot user-level instructions.
 - `vscode/user/mcp.json` is a minimal merge fragment for the Serena MCP server.
 - `AGENTS.md` documents the maintenance rules for this repository.
 
 ## Managed Files
 
-The canonical files are tracked here and remain available at their normal discovery paths:
+The canonical files are tracked here and remain available at their normal
+Copilot Agent Host discovery paths:
 
-- `vscode/user/prompts/` -> `%APPDATA%\\Code\\User\\prompts\\`
+- `vscode/user/agents/` -> `%USERPROFILE%\\.copilot\\agents\\`
+- `vscode/user/instructions/` -> `%USERPROFILE%\\.copilot\\instructions\\`
 
-Edit the canonical files in this repository. The original paths are links into this tree, so VS Code and Copilot continue to discover them normally.
+Edit the canonical files in this repository. The user-level Copilot paths are
+directory junctions into this tree, so Copilot continues to discover them
+normally.
 
 ## Windows Link Note
 
-This installation uses a directory junction for the managed prompts directory
-because native symbolic-link creation requires Windows Developer Mode or
-administrator privileges. Junctions provide the same path redirection for this
-local directory. After enabling Developer Mode, the junction can be replaced
-with a native symbolic link if desired.
+This installation uses directory junctions for the managed `agents` and
+`instructions` directories because native symbolic-link creation requires
+Windows Developer Mode or administrator privileges. Junctions provide the same
+path redirection for this local setup. After enabling Developer Mode, the
+junctions can be replaced with native symbolic links if desired.
 
 Do not store API keys, tokens, passwords, or other secrets in this repository.
+
+The former `%APPDATA%\\Code\\User\\prompts` path was used for Local-agent
+prompt files. Prompt files are deprecated for Agent Host sessions, so it is not
+a managed path for these Copilot customizations.
 
 ## Serena MCP
 

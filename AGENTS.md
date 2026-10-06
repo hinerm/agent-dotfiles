@@ -4,7 +4,8 @@
 
 This repository is the source of truth for the personal agent customizations used by the local VS Code and Copilot installations.
 
-- VS Code user instructions and agents belong under `vscode/user/prompts/`.
+- Copilot user agents belong under `vscode/user/agents/`.
+- Copilot user instructions belong under `vscode/user/instructions/`.
 - Copilot skills belong under `copilot/skills/<skill-name>/`.
 - Keep each customization's filename and frontmatter compatible with the host that discovers it.
 
@@ -64,11 +65,13 @@ Prefer links when the checkout is actively being developed so changes are picked
 up immediately. Native symbolic links require Windows Developer Mode or
 administrator privileges; copying is the portable fallback.
 
-The managed discovery path on Windows is:
+The managed discovery paths on Windows are:
 
-- `%APPDATA%\\Code\\User\\prompts`
+- `%USERPROFILE%\\.copilot\\agents`
+- `%USERPROFILE%\\.copilot\\instructions`
 - `%USERPROFILE%\\.copilot\\skills\\fiji-script-debugging`
 
-Use `Get-Item` to confirm that the path is a junction or symbolic link, and
-verify that the expected files resolve through it. Directory junctions are the
-supported no-admin fallback used by this installation.
+Use `Get-Item` to confirm that the `agents` and `instructions` paths are
+junctions or symbolic links, and verify that the expected files resolve through
+them. Directory junctions are the supported no-admin fallback used by this
+installation.
